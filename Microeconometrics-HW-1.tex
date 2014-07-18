@@ -1,0 +1,237 @@
+\documentclass[11pt]{article}
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb}
+
+\usepackage{amsmath,amsthm,enumerate,graphicx,bm,type1cm,amssymb,epsfig,lscape,setspace,amssymb,url,color,tabu,xcolor,colortbl,rotating,tikz,pdfpages}
+
+
+\bibliographystyle{econometrica}
+
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb, natbib, remreset}
+%\usepackage{natbib}
+%\usepackage{setspace}
+\theoremstyle{definition}
+\newtheorem{mc}{MC}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{pr}{Proof}
+
+\newtheorem{assump}{Assumption}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{definition}{Definition}[section]
+% \def\stackunder#1#2{\mathrel{\mathop{#2}\limits_{#1}}}
+% \renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newtheorem{corol}{Corollary}[section]
+\newcommand{\argmax}{\mathop{\rm \textit{arg} \ \textit{max}}\limits}
+\newcommand{\argmin}{\mathop{\rm \textit{arg} \ \textit{min}}\limits}
+
+\newcommand{\vecop}{{\rm vec}}
+\newcommand{\E}{{\rm E}}
+\newcommand{\Var}{{\rm Var}}
+\newcommand{\determinant}{{\rm det}}
+\newcommand{\tr}{{\rm tr}}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\def\inprob{\stackrel{p}{\rightarrow}}
+\def\ninprob{\stackrel{p}{\nrightarrow}}
+\def\indist{\stackrel{d}{\rightarrow}}
+\def\nindist{\stackrel{d}{\nrightarrow}}
+\def\as{\stackrel{a.s.}{\rightarrow}}
+\def\betahn{\hat{\beta}_{n}}
+\def\betao{\beta^{0}}
+\def\sumin{\sum_{i=1}^{n}}
+\def\sumjn{\sum_{i=1}^{n}}
+\def\thetahn{\hat{\theta}_{n}}
+\def\Ho{$H_{0} \ : \ a(\beta^{0})=0$}
+\def\abhat{$a(\hat{\beta})$}
+\def\abo{$a(\beta^{0})$}
+\def\Abbar{$A(\bar{\beta})$}
+\def\bhat{$\hat{\beta}$}
+\def\bo{$\beta^{0}$}
+
+\setlength{\oddsidemargin}{5mm}
+\setlength{\textwidth}{16cm}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\textheight}{23cm}
+\onehalfspacing
+
+\definecolor{Gray}{gray}{0.85}
+
+\title{Homework 1}
+\author{Robert Ackerman \\ University of North Carolina}
+%rkackerm@live.unc.edu}} }
+\date{January 22, 2014}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\section*{\underline{14 - 3}} 
+Suppose we use an index formulation for a discrete choice model but it is felt that the latent variable is strictly positive.  This is accommodated by supposing the latent variable $y^*$ has exponential density with parameter $\gamma$, so the density $f(y^*)$ is $f(y^*)=\gamma^{-1} \ exp (-y^*/\gamma)$, with $\gamma=exp(\boldsymbol{x}'\beta)$.  We observe $y=1$ if $y^*>\boldsymbol{z}'\alpha$ and $y=0$ if $y^*\leq\boldsymbol{z}'\alpha$
+\subsection*{(a)}
+Give the log-likelihood function for the observed data.
+\begin{equation*}
+\begin{split}
+L &= \prod^N_{i=1} f(y_i|x) \\
+ln \ L &= \sum^N_{i=1}  ln \ f(y_i|x) \\
+ &=  \sum^N_{i=1}  -\boldsymbol{x}'\beta-(\boldsymbol{z}'\alpha)/(exp(\boldsymbol{x}'\beta) \\
+\end{split}
+\end{equation*}
+
+\subsection*{(b)}
+What is the effect of a one-unit change in $x_{ji}$ on $Pr[y_i = 1]$?
+\begin{equation*}
+\frac{\partial}{\partial x_{ji}} \ P(yi=1)= \beta-(\boldsymbol{z}'\alpha) x_{ji}/exp(\boldsymbol{x}'\beta)
+\end{equation*}
+
+\subsection*{(c)}
+Suppose that $y=1$ if $y^* > exp(\boldsymbol{z}'\alpha)$ and $\boldsymbol{x}=\boldsymbol{z}$.  Do you see any problems in identifying $\alpha$ and/or $\beta$?  Explain your answer.
+\textit{Even with this additional information, we are not going to be able to separate and thus identify both $\beta$ and $\alpha$.  We can only determine their joint effect.}
+
+\section*{\underline{14 - 4}} 
+Consider the maximum score estimator with objective functions:
+\begin{equation*}
+S_N(\beta)=\sum^N_{i=1}\left\{y_i\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-y_i)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right\}
+\end{equation*}
+
+\begin{equation*}
+Q_{N}(\beta)=\sum^{N}_{i=1}|y_i-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)|
+\end{equation*}
+ 
+\subsection*{(a)}
+Show that:
+\begin{equation*}
+S_N(\beta)=\sum^N_{i=1}\left[\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+\boldsymbol{1}(y_i=0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right]
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+S_N(\beta) &=\sum^N_{i=1}\left\{y_i\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-y_i)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right\} \\
+ &=\sum^N_{i=1}\left\{ \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0))\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right\} \\
+  &=\sum^N_{i=1}\left\{ \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta \leq0)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right\} \\
+ &= \sum^N_{i=1}\left[\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+\boldsymbol{1}(y_i=0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right] \\
+\end{split}
+\end{equation*}
+
+\subsection*{(b)}
+Show that:
+\begin{equation*}
+Q_N(\beta)=\sum^N_{i=1}\left[\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+\boldsymbol{1}(y_i=0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)\right]
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+Q_{N}(\beta) & =\sum^{N}_{i=1}|y_i-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)| \\
+ &=\sum^{N}_{i=1}|\boldsymbol{1}(y_i=1) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+\boldsymbol{1}(y_i=1) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)| \\
+ &=\sum^{N}_{i=1}|\boldsymbol{1}(y_i=1) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-\boldsymbol{1}(y_i=0) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)| \\
+ &=\sum^{N}_{i=1}|\boldsymbol{1}(y_i=1) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+(\boldsymbol{x}_i^{'}\beta\leq0)-\boldsymbol{1}(y_i=0) \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)| \\
+  &=\sum^N_{i=1}\left[\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+\boldsymbol{1}(y_i=0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)\right]
+\end{split}
+\end{equation*}
+
+\subsection*{(c)}
+Using $\boldsymbol{1}(y_i=1)=1-\boldsymbol{1}(y_i=0)$, show that $Q_N(\beta)=N-S_N(\beta)$ 
+\begin{equation*}
+\begin{split}
+ Q_{N}(\beta) &=\sum^N_{i=1}\left[\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+\boldsymbol{1}(y_i=0) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)\right] \\
+ &= \sum^N_{i=1}\left[(1-\boldsymbol{1}(y_i=0)) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+(1-\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)\right] \\
+ &= N -\sum^N_{i=1}\left[(\boldsymbol{1}(y_i=0)) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)+\boldsymbol{1}(y_i=1) \times \boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)\right] \\
+ &=N-S_N(\beta) \\
+\end{split}
+\end{equation*}
+
+\subsection*{(d)}
+Using $\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)=1-\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\ >0)$ show that $S_N(\beta)$ can be rewritten as: 
+\begin{equation*}
+S_N(\beta)=\sum^N_{i=1}(2y_i-1)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\ >0)+N-\sum^N_{i=1}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+S_N(\beta)&=\sum^N_{i=1}\left\{y_i\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-y_i)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\leq0)\right\} \\
+&=\sum^N_{i=1}\left\{y_i\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta>0)+(1-y_i)\boldsymbol{1}(1-\boldsymbol{x}_i^{'}\beta>0)\right\} \\
+&=\sum^N_{i=1}(2y_i-1)\boldsymbol{1}(\boldsymbol{x}_i^{'}\beta\ >0)+N-\sum^N_{i=1} \\
+\end{split}
+\end{equation*}
+
+\section*{\underline{14 - 5}} 
+Use the health expenditure data of Section 16.6.  The model is a probit regression of DMED, an indicator variable for positive health expenditures, against just one regressor for simplicity, NDISEASE, the number of chronic diseases.
+\subsection*{(a)}
+Obtain the OLS estimate of the slope parameter. \\
+\textit{(See table below for results, and attached for code)}
+\subsection*{(b)}
+Obtain the probit estimate of the slope parameter. \\
+\textit{(See table below for results, and attached for code)}
+\subsection*{(c)}
+Given part (b), obtain the marginal effect of chronic diseases in two ways: averaged over the sample and evaluated at the sample average of NDISEASE. \\
+\textit{(See table below for results, and attached for code)}
+\subsection*{(d)}
+Obtain the logic estimate of the slope parameter. \\
+\textit{(See table below for results, and attached for code)}
+\subsection*{(e)}
+Given part (d), obtain the marginal effect of chronic diseases in three ways: averaged over the sample, evaluated at the sample average of NDISEASE, and evaluated at $\Lambda(\boldsymbol{x},\beta)=\bar{y}$. \\
+\textit{(See table below for results, and attached for code)}
+\subsection*{(f)}
+For the logic model calculate the proportionate change in the odds ratio when NDISEASE changes.
+
+\vspace{2.5mm}
+\noindent
+\begin{center}
+\begin{tabular}{l c c c}
+\hline\hline
+\multicolumn{4}{c}{\textbf{14-5 Results}} \\
+\hline\hline 
+ & \underline{OLS} & \underline{Probit} & \underline{Logit} \\
+Estimate & 0.0091 & 0.0351 & 0.0615 \\ 
+ & (0.0004) & (0.0017) & (0.0030) \\
+P-value & 0.000 & 0.000 & 0.000 \\ 
+AME & 0.0091 & 0.0102 & 0.0103 \\
+& (0.0005) & (0.0005) & (0.0005) \\
+P-value & 0.000 & 0.000 & 0.000 \\
+MEM & N/A & 0.0102 & 0.0103 \\
+& N/A & (0.0005) & (0.0005) \\
+P-value & N/A & 0.000 & 0.000 \\
+MER & N/A & N/A & ? \\
+& N/A & N/A & (0.0030) \\
+P-value & N/A & N/A & 0.000 \\
+Log-likelihood & N/A & -10410.18 & -10410.89 \\
+\hline\hline
+\end{tabular} 
+\end{center} 
+Note: numbers in parenthesis are standard errors.
+
+\section*{\underline{14 - 6}} 
+Continue the analysis of Exercise 14.5.
+\subsection*{(a)}
+Compare the three binary models on the basis of statistical significance of NDISEASE. \\
+\textit{We can't properly interpret significance given that we can only interpret the sign of coefficient, and not magnitude.}
+\subsection*{(b)}
+Compare the three binary models on the basis of the estimated marginal effect. \\
+\textit{The marginal effects are nearly the same, across all three models.}
+\subsection*{(c)}
+Compare the three binary models on the basis of predicted probabilities \\
+\textit{In this regard, the models are a bit different.  As the figure below demonstrates, all three predict medical expenditures as an increasing function of the number of chronic diseases.  As expected, for large values of NDISEASE the OLS predictions lie outside the interval $(0,1)$.  The Probit/Logit results are very similar, and all predicted probabilities fall nicely in $(0,1)$.}
+\subsection*{(d)}
+Compare the logic and probit binary models on the basis of the log-likelihood. \\
+\textit{As expected, the log-likelihood values for probit/logit are nearly identical.}
+\begin{center}
+\includegraphics[scale=1.0]{ECON873HW1Figure1}
+\end{center}
+
+\begin{center}
+\includepdf[pages={1-},scale=1]{Ackerman_ECON873_HW1.pdf}
+\end{center}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,404 @@
+--------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW6_Ackerman.log
+  log type:  text
+ opened on:  18 Jul 2014, 17:37:13
+
+. 
+. set more off
+
+. pause on 
+
+. 
+. **** Load Data ****
+. * use "/Users/robertackerman/Desktop/Dropbox/Econ 873/mma10252005/ema1996.dta", clear
+. 
+. infile lnhr lnwg kids ageh agesq disab id year using "/Users/robertackerman/Desktop/Dropbox/Microeconometrics/MOM.dat"
+(5320 observations read)
+
+. 
+. ** Fix Seed, so  the Same Subsample is Drawn Each Time **
+. set seed 123456789
+
+. 
+. ** 50% Randomly Generated Subsample **
+. sample 50
+(2660 observations deleted)
+
+. 
+. **** (b) (1) Pooled OLS ****
+. 
+. * POLS, beta and default SE
+. reg lnhr lnwg
+
+      Source |       SS       df       MS              Number of obs =    2660
+-------------+------------------------------           F(  1,  2658) =   70.96
+       Model |  5.77719869     1  5.77719869           Prob > F      =  0.0000
+    Residual |  216.404143  2658  .081416156           R-squared     =  0.0260
+-------------+------------------------------           Adj R-squared =  0.0256
+       Total |  222.181341  2659  .083558233           Root MSE      =  .28534
+
+------------------------------------------------------------------------------
+        lnhr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        lnwg |   .1088856   .0129261     8.42   0.000     .0835394    .1342318
+       _cons |   7.367346   .0340512   216.36   0.000     7.300576    7.434115
+------------------------------------------------------------------------------
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "reg lnhr lnwg" "_b[lnwg] _b[_cons]", cluster(id) reps(200)
+
+command:      reg lnhr lnwg
+statistics:   _bs_1      = _b[lnwg]
+              _bs_2      = _b[_cons]
+
+Bootstrap statistics                              Number of obs    =      2660
+                                                  N of clusters    =       531
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .1088856  .0017875  .0329773   .0438558   .1739155   (N)
+             |                                       .0496709   .1669933   (P)
+             |                                        .044258    .163724  (BC)
+       _bs_2 |   200  7.367346  -.005514  .0898431   7.190179   7.544512   (N)
+             |                                       7.203297    7.52483   (P)
+             |                                       7.205974   7.531839  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. **** (b) (2) Between ****
+. 
+. * Between, beta and default SE
+. xtreg lnhr lnwg, be i(id)
+
+Between regression (regression on group means)  Number of obs      =      2660
+Group variable: id                              Number of groups   =       531
+
+R-sq:  within  = 0.0120                         Obs per group: min =         1
+       between = 0.0366                                        avg =       5.0
+       overall = 0.0260                                        max =        10
+
+                                                F(1,529)           =     20.07
+sd(u_i + avg(e_i.))=  .1847865                  Prob > F           =    0.0000
+
+------------------------------------------------------------------------------
+        lnhr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        lnwg |   .0909316   .0202977     4.48   0.000     .0510576    .1308055
+       _cons |   7.416859   .0536025   138.37   0.000     7.311559    7.522159
+------------------------------------------------------------------------------
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "xtreg lnhr lnwg, be i(id)" "_b[lnwg] _b[_cons]", cluster(id) reps(200) 
+
+command:      xtreg lnhr lnwg , be i(id)
+statistics:   _bs_1      = _b[lnwg]
+              _bs_2      = _b[_cons]
+
+Bootstrap statistics                              Number of obs    =      2660
+                                                  N of clusters    =       531
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .0909315    .00056  .0199168   .0516564   .1302067   (N)
+             |                                        .047649   .1277058   (P)
+             |                                       .0441562    .122402  (BC)
+       _bs_2 |   200  7.416859 -.0018115  .0540035   7.310366   7.523351   (N)
+             |                                       7.321085   7.535147   (P)
+             |                                       7.333663   7.541705  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. **** (b) (3) Within ****
+. 
+. * Within, beta and default SE
+. xtreg lnhr lnwg, fe i(id)
+
+Fixed-effects (within) regression               Number of obs      =      2660
+Group variable: id                              Number of groups   =       531
+
+R-sq:  within  = 0.0120                         Obs per group: min =         1
+       between = 0.0366                                        avg =       5.0
+       overall = 0.0260                                        max =        10
+
+                                                F(1,2128)          =     25.76
+corr(u_i, Xb)  = -0.0966                        Prob > F           =    0.0000
+
+------------------------------------------------------------------------------
+        lnhr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        lnwg |   .1505282   .0296598     5.08   0.000     .0923631    .2086934
+       _cons |   7.259104   .0772396    93.98   0.000     7.107631    7.410577
+-------------+----------------------------------------------------------------
+     sigma_u |  .18611031
+     sigma_e |  .24395897
+         rho |  .36788032   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+F test that all u_i=0:     F(530, 2128) =     2.85           Prob > F = 0.0000
+
+. est store feiid
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "xtreg lnhr lnwg, fe i(id)" "_b[lnwg] _b[_cons]", cluster(id) reps(200)
+
+command:      xtreg lnhr lnwg , fe i(id)
+statistics:   _bs_1      = _b[lnwg]
+              _bs_2      = _b[_cons]
+
+Bootstrap statistics                              Number of obs    =      2660
+                                                  N of clusters    =       531
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .1505282 -.0000695  .0703789   .0117442   .2893123   (N)
+             |                                       .0123958   .2901874   (P)
+             |                                       .0096987   .2881886  (BC)
+       _bs_2 |   200  7.259104 -.0006056   .186753   6.890835   7.627373   (N)
+             |                                       6.888227   7.627666   (P)
+             |                                       6.897913   7.635898  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. 
+. **** (b) (4) FD ****
+. sort id year
+
+. gen dlnhr = lnhr - lnhr[_n-1]
+(1 missing value generated)
+
+. gen dlnwg = lnwg - lnwg[_n-1]
+(1 missing value generated)
+
+. drop if year == 1979
+(252 observations deleted)
+
+. 
+. * FD, beta and default SE
+. reg dlnhr dlnwg
+
+      Source |       SS       df       MS              Number of obs =    2408
+-------------+------------------------------           F(  1,  2406) =   15.88
+       Model |  1.79760994     1  1.79760994           Prob > F      =  0.0001
+    Residual |   272.41858  2406   .11322468           R-squared     =  0.0066
+-------------+------------------------------           Adj R-squared =  0.0061
+       Total |   274.21619  2407  .113924466           Root MSE      =  .33649
+
+------------------------------------------------------------------------------
+       dlnhr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       dlnwg |   .0948066   .0237937     3.98   0.000     .0481484    .1414648
+       _cons |   .0007837   .0068571     0.11   0.909    -.0126628    .0142302
+------------------------------------------------------------------------------
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "reg dlnhr dlnwg" "_b[dlnwg]", cluster(id) reps(200)
+
+command:      reg dlnhr dlnwg
+statistic:    _bs_1      = _b[dlnwg]
+
+Bootstrap statistics                              Number of obs    =      2408
+                                                  N of clusters    =       530
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .0948066   -.00634  .0646937  -.0327665   .2223797   (N)
+             |                                      -.0380424   .2247263   (P)
+             |                                      -.0163835   .2381402  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. **** (b) (5) RE GLS ****
+. 
+. **** Need to Re-Load Data ****
+. clear
+
+. infile lnhr lnwg kids ageh agesq disab id year using "/Users/robertackerman/Desktop/Dropbox/Microeconometrics/MOM.dat"
+(5320 observations read)
+
+. 
+. ** Fix Seed, so  the Same Subsample is Drawn Each Time **
+. set seed 123456789
+
+. 
+. ** 50% Randomly Generated Subsample **
+. sample 50
+(2660 observations deleted)
+
+. 
+. * RE GLS, beta and default SE
+. xtreg lnhr lnwg, re i(id)
+
+Random-effects GLS regression                   Number of obs      =      2660
+Group variable: id                              Number of groups   =       531
+
+R-sq:  within  = 0.0120                         Obs per group: min =         1
+       between = 0.0366                                        avg =       5.0
+       overall = 0.0260                                        max =        10
+
+                                                Wald chi2(1)       =     44.96
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2        =    0.0000
+
+------------------------------------------------------------------------------
+        lnhr |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        lnwg |   .1117116   .0166597     6.71   0.000     .0790592     .144364
+       _cons |   7.361269   .0441404   166.77   0.000     7.274756    7.447783
+-------------+----------------------------------------------------------------
+     sigma_u |  .14419251
+     sigma_e |  .24395897
+         rho |  .25889849   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. est store reiid
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "xtreg lnhr lnwg, re i(id)" "_b[lnwg] _b[_cons]", cluster(id) reps(200)
+
+command:      xtreg lnhr lnwg , re i(id)
+statistics:   _bs_1      = _b[lnwg]
+              _bs_2      = _b[_cons]
+
+Bootstrap statistics                              Number of obs    =      2660
+                                                  N of clusters    =       531
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .1117116  .0064918  .0379889   .0367992    .186624   (N)
+             |                                       .0383125   .1896351   (P)
+             |                                       .0164032   .1666818  (BC)
+       _bs_2 |   200  7.361269 -.0169378  .1015335    7.16105   7.561489   (N)
+             |                                        7.15382   7.556422   (P)
+             |                                        7.21594   7.615329  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. **** (b) (6) RE MLE ****
+. * RE MLE, beta and default SE
+. xtreg lnhr lnwg, mle i(id)
+
+Fitting constant-only model:
+Iteration 0:   log likelihood = -311.73072
+Iteration 1:   log likelihood = -311.53667
+Iteration 2:   log likelihood = -311.53648
+
+Fitting full model:
+Iteration 0:   log likelihood =   -289.558
+Iteration 1:   log likelihood = -289.51506
+Iteration 2:   log likelihood = -289.51506
+
+Random-effects ML regression                    Number of obs      =      2660
+Group variable: id                              Number of groups   =       531
+
+Random effects u_i ~ Gaussian                   Obs per group: min =         1
+                                                               avg =       5.0
+                                                               max =        10
+
+                                                LR chi2(1)         =     44.04
+Log likelihood  = -289.51506                    Prob > chi2        =    0.0000
+
+------------------------------------------------------------------------------
+        lnhr |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        lnwg |   .1119811   .0167781     6.67   0.000     .0790965    .1448656
+       _cons |   7.360595   .0444583   165.56   0.000     7.273458    7.447732
+-------------+----------------------------------------------------------------
+    /sigma_u |   .1471515   .0071497                      .1337849    .1618537
+    /sigma_e |   .2436914   .0037213                      .2365058    .2510953
+         rho |   .2671992   .0208875                      .2279029    .3096506
+------------------------------------------------------------------------------
+Likelihood-ratio test of sigma_u=0: chibar2(01)=  295.96 Prob>=chibar2 = 0.000
+
+. 
+. * BS SE
+. set seed 123456789
+
+. bs "xtreg lnhr lnwg, mle i(id)" "_b[lnwg] _b[_cons]", cluster(id) reps(200)
+
+command:      xtreg lnhr lnwg , mle i(id)
+statistics:   _bs_1      = _b[lnwg]
+              _bs_2      = _b[_cons]
+
+Bootstrap statistics                              Number of obs    =      2660
+                                                  N of clusters    =       531
+                                                  Replications     =       200
+
+------------------------------------------------------------------------------
+Variable     |  Reps  Observed      Bias  Std. Err. [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _bs_1 |   200  .1119811  .0069315  .0387972   .0354747   .1884875   (N)
+             |                                       .0380602   .1929022   (P)
+             |                                       .0162412    .168208  (BC)
+       _bs_2 |   200  7.360595 -.0180629  .1035985   7.156303   7.564886   (N)
+             |                                       7.145243   7.557072   (P)
+             |                                       7.207769   7.615748  (BC)
+------------------------------------------------------------------------------
+Note:  N   = normal
+       P   = percentile
+       BC  = bias-corrected
+
+. 
+. **** (f) ****
+. hausman feiid reiid
+
+                 ---- Coefficients ----
+             |      (b)          (B)            (b-B)     sqrt(diag(V_b-V_B))
+             |     feiid        reiid        Difference          S.E.
+-------------+----------------------------------------------------------------
+        lnwg |    .1505282     .1117116        .0388166        .0245389
+------------------------------------------------------------------------------
+                           b = consistent under Ho and Ha; obtained from xtreg
+            B = inconsistent under Ha, efficient under Ho; obtained from xtreg
+
+    Test:  Ho:  difference in coefficients not systematic
+
+                  chi2(1) = (b-B)'[(V_b-V_B)^(-1)](b-B)
+                          =        2.50
+                Prob>chi2 =      0.1137
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW6_Ackerman.log
+  log type:  text
+ closed on:  18 Jul 2014, 17:38:02
+--------------------------------------------------------------------------------------------------------------------------

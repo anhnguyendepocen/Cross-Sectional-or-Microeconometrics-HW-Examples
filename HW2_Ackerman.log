@@ -1,0 +1,405 @@
+--------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW2_Ackerman.log
+  log type:  text
+ opened on:  18 Jul 2014, 17:25:50
+
+. 
+. set more off
+
+. pause on 
+
+. 
+. ******** 2. Load the Entire Sample ********
+. 
+. infile mode price crate dbeach dpier dprivate dcharter pbeach ppier pprivate pcharter qbeach qpier qprivate qcharter inc
+> ome using NLDATA.ASC
+(1182 observations read)
+
+. 
+. ******** 3. Generate 50% Subsample ********
+. 
+. ** Fix Seed, so  the Same Subsample is Drawn Each Time **
+. set seed 123456789
+
+. 
+. ** 50% Randomly Generated Subsample **
+. sample 50
+(591 observations deleted)
+
+. su dbeach
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+      dbeach |       591    .1167513    .3213957          0          1
+
+. su dpier
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+       dpier |       591     .142132    .3494812          0          1
+
+. su dprivate
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+    dprivate |       591    .3722504    .4838141          0          1
+
+. su dcharter
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+    dcharter |       591    .3688663    .4829064          0          1
+
+.  
+. ******** 4. Data Magagement, Note: This is based heavily on Cameron and Trivedi's mma15p2gev.do file ******** 
+. 
+. ** Re-scale income by 1000 **
+. gen inc = income/1000
+
+. 
+. ** Data are one entry per individual **
+. ** Reshape to 4 observations per individual; one for each alternative **
+. ** Use reshape to do this **
+. ** Note:  alternatv = 1 if beach, = 2 if pier; = 3 if private boat; = 4 if charter **
+. 
+. ** First generate new variables **
+. gen id = _n
+
+. gen d1 = dbeach
+
+. gen p1 = pbeach
+
+. gen q1 = qbeach
+
+. gen d2 = dpier
+
+. gen p2 = ppier
+
+. gen q2 = qpier
+
+. gen d3 = dprivate
+
+. gen p3 = pprivate
+
+. gen q3 = qprivate
+
+. gen d4 = dcharter
+
+. gen p4 = pcharter
+
+. gen q4 = qcharter
+
+. 
+. ** Now use the reshape command ** 
+. reshape long d p q, i(id) j(alterntv)
+(note: j = 1 2 3 4)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      591   ->    2364
+Number of variables                  30   ->      22
+j variable (4 values)                     ->   alterntv
+xij variables:
+                           d1 d2 ... d4   ->   d
+                           p1 p2 ... p4   ->   p
+                           q1 q2 ... q4   ->   q
+-----------------------------------------------------------------------------
+
+. ** This automatically generates variable alterntv = 1 (beach), 2 (pier), 3 (boat) and 4 (charter) **
+. 
+. ******** 5. 15-2 ********
+. 
+. ** (a) Estimate the conditional logit model of Section 15.2.1. **
+. asclogit d p q, case(id) alternatives(alterntv) casevars(inc)
+
+Iteration 0:   log likelihood = -650.20658  
+Iteration 1:   log likelihood = -624.53682  
+Iteration 2:   log likelihood = -622.23988  
+Iteration 3:   log likelihood =  -622.2215  
+Iteration 4:   log likelihood =  -622.2215  
+
+Alternative-specific conditional logit         Number of obs      =       2364
+Case variable: id                              Number of cases    =        591
+
+Alternative variable: alterntv                 Alts per case: min =          4
+                                                              avg =        4.0
+                                                              max =          4
+
+                                                  Wald chi2(5)    =     123.84
+Log likelihood =  -622.2215                       Prob > chi2     =     0.0000
+
+------------------------------------------------------------------------------
+           d |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+alterntv     |
+           p |   -.022383   .0021848   -10.24   0.000    -.0266651   -.0181009
+           q |   .2083431   .1489423     1.40   0.162    -.0835784    .5002646
+-------------+----------------------------------------------------------------
+1            |  (base alternative)
+-------------+----------------------------------------------------------------
+2            |
+         inc |  -.1711379   .0746539    -2.29   0.022    -.3174569    -.024819
+       _cons |   .8594627   .3266417     2.63   0.009     .2192567    1.499669
+-------------+----------------------------------------------------------------
+3            |
+         inc |  -.0031477   .0680852    -0.05   0.963    -.1365923    .1302968
+       _cons |   .9310191    .312062     2.98   0.003     .3193888    1.542649
+-------------+----------------------------------------------------------------
+4            |
+         inc |  -.1215695   .0693994    -1.75   0.080    -.2575897    .0144508
+       _cons |    1.95299   .3195131     6.11   0.000     1.326756    2.579224
+------------------------------------------------------------------------------
+
+. 
+. ** (c) What is the effect of an increase in price on the various modes of fishing? ** 
+. estat mfx, varlist(p)
+
+Pr(choice = 1|1 selected) = .06266738
+-------------------------------------------------------------------------------
+variable     |   dp/dx   Std. Err.    z     P>|z|  [    95% C.I.    ]       X
+-------------+-----------------------------------------------------------------
+p            |                                                                 
+           1 | -.001315    .00017   -7.72   0.000  -.001649  -.000981    98.279
+           2 |  .000103   .000024    4.38   0.000   .000057   .000149    98.279
+           3 |  .000607   .000083    7.34   0.000   .000445   .000769    52.413
+           4 |  .000605   .000083    7.32   0.000   .000443   .000767    81.514
+-------------------------------------------------------------------------------
+
+Pr(choice = 2|1 selected) = .07350399
+-------------------------------------------------------------------------------
+variable     |   dp/dx   Std. Err.    z     P>|z|  [    95% C.I.    ]       X
+-------------+-----------------------------------------------------------------
+p            |                                                                 
+           1 |  .000103   .000024    4.38   0.000   .000057   .000149    98.279
+           2 | -.001524   .000186   -8.20   0.000  -.001889   -.00116    98.279
+           3 |  .000712   .000092    7.73   0.000   .000531   .000892    52.413
+           4 |  .000709   .000092    7.70   0.000   .000529    .00089    81.514
+-------------------------------------------------------------------------------
+
+Pr(choice = 3|1 selected) = .43263014
+-------------------------------------------------------------------------------
+variable     |   dp/dx   Std. Err.    z     P>|z|  [    95% C.I.    ]       X
+-------------+-----------------------------------------------------------------
+p            |                                                                 
+           1 |  .000607   .000083    7.34   0.000   .000445   .000769    98.279
+           2 |  .000712   .000092    7.73   0.000   .000531   .000892    98.279
+           3 | -.005494   .000559   -9.83   0.000  -.006589  -.004399    52.413
+           4 |  .004176   .000545    7.66   0.000   .003107   .005244    81.514
+-------------------------------------------------------------------------------
+
+Pr(choice = 4|1 selected) = .43119849
+-------------------------------------------------------------------------------
+variable     |   dp/dx   Std. Err.    z     P>|z|  [    95% C.I.    ]       X
+-------------+-----------------------------------------------------------------
+p            |                                                                 
+           1 |  .000605   .000083    7.32   0.000   .000443   .000767    98.279
+           2 |  .000709   .000092    7.70   0.000   .000529    .00089    98.279
+           3 |  .004176   .000545    7.66   0.000   .003107   .005244    52.413
+           4 |  -.00549   .000559   -9.82   0.000  -.006586  -.004394    81.514
+-------------------------------------------------------------------------------
+
+. 
+. ******** 6. 15-3 ********
+. clear
+
+. 
+. ** Re-load the data, re-scale income and generate the subsample**
+. infile mode price crate dbeach dpier dprivate dcharter pbeach ppier pprivate pcharter qbeach qpier qprivate qcharter inc
+> ome using NLDATA.ASC
+(1182 observations read)
+
+. gen inc = income/1000
+
+. set seed 123456789
+
+. sample 50
+(591 observations deleted)
+
+. 
+. ** (a) Estimate the multinomial logit model of Section 15.2.2. **
+. mlogit mode inc, b(1)
+
+Iteration 0:   log likelihood = -746.89332  
+Iteration 1:   log likelihood = -739.23819  
+Iteration 2:   log likelihood = -739.15294  
+Iteration 3:   log likelihood = -739.15281  
+Iteration 4:   log likelihood = -739.15281  
+
+Multinomial logistic regression                   Number of obs   =        591
+                                                  LR chi2(3)      =      15.48
+                                                  Prob > chi2     =     0.0014
+Log likelihood = -739.15281                       Pseudo R2       =     0.0104
+
+------------------------------------------------------------------------------
+        mode |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+1            |  (base outcome)
+-------------+----------------------------------------------------------------
+2            |
+         inc |  -.1773109   .0749714    -2.37   0.018    -.3242521   -.0303698
+       _cons |   .8689192   .3270223     2.66   0.008     .2279672    1.509871
+-------------+----------------------------------------------------------------
+3            |
+         inc |    .020615   .0548374     0.38   0.707    -.0868643    .1280943
+       _cons |   1.070403   .2726271     3.93   0.000     .5360635    1.604742
+-------------+----------------------------------------------------------------
+4            |
+         inc |  -.0959633   .0578337    -1.66   0.097    -.2093152    .0173886
+       _cons |   1.532838   .2748424     5.58   0.000     .9941565    2.071519
+------------------------------------------------------------------------------
+
+. 
+. ** (b) Comment on the statistical significance of the parameter estimates. **
+. test inc
+
+ ( 1)  [1]o.inc = 0
+ ( 2)  [2]inc = 0
+ ( 3)  [3]inc = 0
+ ( 4)  [4]inc = 0
+       Constraint 1 dropped
+
+           chi2(  3) =   14.28
+         Prob > chi2 =    0.0025
+
+. 
+. ** (c) What is the effect of an increase in income on the various modes of fishing? ** 
+. margins, dydx(inc) predict(outcome(1)) atmean
+
+Conditional marginal effects                      Number of obs   =        591
+Model VCE    : OIM
+
+Expression   : Pr(mode==1), predict(outcome(1))
+dy/dx w.r.t. : inc
+at           : inc             =    3.993232 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         inc |   .0061745   .0053773     1.15   0.251    -.0043649    .0167138
+------------------------------------------------------------------------------
+
+. margins, dydx(inc) predict(outcome(2)) atmean
+
+Conditional marginal effects                      Number of obs   =        591
+Model VCE    : OIM
+
+Expression   : Pr(mode==2), predict(outcome(2))
+dy/dx w.r.t. : inc
+at           : inc             =    3.993232 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         inc |  -.0172535   .0069147    -2.50   0.013    -.0308062   -.0037009
+------------------------------------------------------------------------------
+
+. margins, dydx(inc) predict(outcome(3)) atmean
+
+Conditional marginal effects                      Number of obs   =        591
+Model VCE    : OIM
+
+Expression   : Pr(mode==3), predict(outcome(3))
+dy/dx w.r.t. : inc
+at           : inc             =    3.993232 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         inc |   .0272352   .0084595     3.22   0.001     .0106549    .0438155
+------------------------------------------------------------------------------
+
+. margins, dydx(inc) predict(outcome(4)) atmean
+
+Conditional marginal effects                      Number of obs   =        591
+Model VCE    : OIM
+
+Expression   : Pr(mode==4), predict(outcome(4))
+dy/dx w.r.t. : inc
+at           : inc             =    3.993232 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         inc |  -.0161561   .0089038    -1.81   0.070    -.0336072     .001295
+------------------------------------------------------------------------------
+
+. 
+. 
+. ******** 7. 15-4 ********
+. ** Collapse the data into a three alternative model **
+. replace mode=0 if mode==1 | mode==2
+(153 real changes made)
+
+. replace mode=1 if mode==3
+(220 real changes made)
+
+. replace mode=2 if mode==4
+(218 real changes made)
+
+. 
+. ** (a) Estimate an ordered logit model with income as the only regressor. **
+. ologit mode inc
+
+Iteration 0:   log likelihood = -641.57828  
+Iteration 1:   log likelihood = -641.35973  
+Iteration 2:   log likelihood = -641.35972  
+
+Ordered logistic regression                       Number of obs   =        591
+                                                  LR chi2(1)      =       0.44
+                                                  Prob > chi2     =     0.5085
+Log likelihood = -641.35972                       Pseudo R2       =     0.0003
+
+------------------------------------------------------------------------------
+        mode |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         inc |  -.0207248   .0313372    -0.66   0.508    -.0821446     .040695
+-------------+----------------------------------------------------------------
+       /cut1 |  -1.137323    .160189                     -1.451288   -.8233587
+       /cut2 |   .4524875   .1536252                      .1513877    .7535873
+------------------------------------------------------------------------------
+
+. 
+. ** (b) Provide an interpretation of the estimated coefficient **
+. 
+. ** (c) Compare the fit of this model with that from a three-choice multinomial model with income as the regressor **
+. mlogit mode inc, b(1)
+
+Iteration 0:   log likelihood = -641.57828  
+Iteration 1:   log likelihood = -636.71194  
+Iteration 2:   log likelihood = -636.70685  
+Iteration 3:   log likelihood = -636.70685  
+
+Multinomial logistic regression                   Number of obs   =        591
+                                                  LR chi2(2)      =       9.74
+                                                  Prob > chi2     =     0.0077
+Log likelihood = -636.70685                       Pseudo R2       =     0.0076
+
+------------------------------------------------------------------------------
+        mode |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+0            |
+         inc |  -.1054007   .0454581    -2.32   0.020     -.194497   -.0163044
+       _cons |   .0659322   .2100869     0.31   0.754    -.3458305    .4776949
+-------------+----------------------------------------------------------------
+1            |  (base outcome)
+-------------+----------------------------------------------------------------
+2            |
+         inc |  -.1151731   .0412571    -2.79   0.005    -.1960355   -.0343106
+       _cons |   .4567516   .1914001     2.39   0.017     .0816144    .8318889
+------------------------------------------------------------------------------
+
+. 
+. clear
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW2_Ackerman.log
+  log type:  text
+ closed on:  18 Jul 2014, 17:25:52
+--------------------------------------------------------------------------------------------------------------------------

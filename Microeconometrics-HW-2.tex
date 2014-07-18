@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb}
+
+\usepackage{amsmath,amsthm,enumerate,graphicx,bm,type1cm,amssymb,epsfig,lscape,setspace,amssymb,url,color,tabu,xcolor,colortbl,rotating,tikz,pdfpages}
+
+
+\bibliographystyle{econometrica}
+
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb, natbib, remreset}
+%\usepackage{natbib}
+%\usepackage{setspace}
+\theoremstyle{definition}
+\newtheorem{mc}{MC}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{pr}{Proof}
+
+\newtheorem{assump}{Assumption}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{definition}{Definition}[section]
+% \def\stackunder#1#2{\mathrel{\mathop{#2}\limits_{#1}}}
+% \renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newtheorem{corol}{Corollary}[section]
+\newcommand{\argmax}{\mathop{\rm \textit{arg} \ \textit{max}}\limits}
+\newcommand{\argmin}{\mathop{\rm \textit{arg} \ \textit{min}}\limits}
+
+\newcommand{\vecop}{{\rm vec}}
+\newcommand{\E}{{\rm E}}
+\newcommand{\Var}{{\rm Var}}
+\newcommand{\determinant}{{\rm det}}
+\newcommand{\tr}{{\rm tr}}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\def\inprob{\stackrel{p}{\rightarrow}}
+\def\ninprob{\stackrel{p}{\nrightarrow}}
+\def\indist{\stackrel{d}{\rightarrow}}
+\def\nindist{\stackrel{d}{\nrightarrow}}
+\def\as{\stackrel{a.s.}{\rightarrow}}
+\def\betahn{\hat{\beta}_{n}}
+\def\betao{\beta^{0}}
+\def\sumin{\sum_{i=1}^{n}}
+\def\sumjn{\sum_{i=1}^{n}}
+\def\thetahn{\hat{\theta}_{n}}
+\def\Ho{$H_{0} \ : \ a(\beta^{0})=0$}
+\def\abhat{$a(\hat{\beta})$}
+\def\abo{$a(\beta^{0})$}
+\def\Abbar{$A(\bar{\beta})$}
+\def\bhat{$\hat{\beta}$}
+\def\bo{$\beta^{0}$}
+
+\setlength{\oddsidemargin}{5mm}
+\setlength{\textwidth}{16cm}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\textheight}{23cm}
+\onehalfspacing
+
+\definecolor{Gray}{gray}{0.85}
+
+\title{Cameron and Trivedi 15-2, 15-3, 15-4}
+\author{Robert Ackerman \\ University of North Carolina}
+% activate to footnote\thanks{Excuse all mistakes.  First attempt at LaTex. E-mail: \texttt{%
+%rkackerm@live.unc.edu}} }
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\pagenumbering{gobble}
+
+\section*{\underline{15 - 2}} 
+Use a 50\% subsample of the fishing mode choice data of Section 15.2.
+
+\subsection*{(a)}
+Estimate the conditional logit model of Section 15.2.1.
+
+\textit{Estimates are reported in Table 1. See attached .do and .log files for more detail.}
+
+\subsection*{(b)}
+Comment on the statistical significance of parameter estimates.
+
+\textit{The reported Wald statistic for the joint significance of p, q, and inc is 124, making the regressors highly statistically significant (jointly).}
+
+\subsection*{(c)}
+What is the effect of an increase in price on the various modes of fishing?
+
+\textit{Marginal effects are reported in Table 2. See attached .do and .log files for more detail. While, all the changes in probabilities are small they are all significant at the 5\% level, and have the expected signs.  In all cases, a one dollar price increase in a mode of fishing has a negative effect on the probabilities on those modes, and a positive effect on the other three.  This mirrors the results reported in Cameron and Trivedi using the full sample, although they report their results for \$100 changes in prices.}
+
+\section*{\underline{15 - 3}} 
+Use a 50\% subsample of the fishing mode choice data of Section 15.2.
+ 
+\subsection*{(a)}
+Estimate the multinomial logit model of Section 15.2.2.
+
+\textit{Estimates are reported in Table 1. See attached .do and .log files for more detail.}
+
+\subsection*{(b)}
+Comment on the statistical significance of parameter estimates.
+
+\textit{A Wald test of the joint significance yields a test statistic of 14.28, making the coefficient estimates jointly significant at the 5\% level.}
+
+\subsection*{(c)}
+What is the effect of an increase in income on the various modes of fishing?
+
+\textit{Marginal effects are reported in Table 2. See attached .do and .log files for more detail. For a \$1,000 change in income, only two of the reported coefficients are significant at the 5\% level.  Those are the decrease in probability for Pier fishing, and the increase in the probability of Private.  The direction of these changes is as expected.}
+
+\vspace{2.5mm}
+\noindent
+\begin{center}
+\begin{tabular}{l l l c c c c}
+\hline\hline
+\multicolumn{7}{c}{\textbf{Table 1, 15-2 and 15-3 Estimation Results}} \\
+\hline\hline 
+& & & \multicolumn{4}{c}{\underline{\textbf{Model Type}}} \\
+\textbf{Regressor} & \textbf{Type} & \textbf{Coefficient} & \textbf{CL (Mixed)} &\textbf{P-value} & \textbf{MNL} & \textbf{P-value} \\
+\hline
+Price (P) & Specific & $\beta_{P}$ & -0.022 & (0.000) & - & - \\ 
+Catch rate (C) & Specific & $\beta_{CR}$ & 0.208 & (0.162) & - & - \\
+Intercept & Invariant & $\alpha_1$ : $Beach$ & - & - & - & - \\ 
+& & $\alpha_2$ : $Pier$ & 0.859 & (0.009) & 0.869 & (0.008)\\
+& & $\alpha_3$ : $Private$ & 0.931 & (0.003) & 1.070 & (0.000) \\
+& & $\alpha_2$ : $Charter$ & 1.953 & (0.000) & 1.533 & (0.000)\\
+Income (I) & Invariant & $\beta_{I1}$ : $Beach$ & - & - & - & - \\
+ &  & $\beta_{I2}$ : $Pier$ & -0.171 & (0.022) & -0.177 & (0.018) \\
+ &  & $\beta_{I3}$ : $Private$ & -0.003 & (0.963) & 0.021 & (0.707) \\
+ &  & $\beta_{I4}$ : $Charter$ & -0.122 & (0.080) & -0.096 & (0.097) \\
+Log likelihood & & & -622 & & -739 & \\
+Pseudo-$R^2$ & & & - & & 0.0104 & \\
+\hline\hline
+\end{tabular} 
+\end{center} 
+
+\vspace{10.5mm}
+\noindent
+\begin{center}
+\begin{tabular}{l c c c c c}
+\hline\hline
+\multicolumn{6}{c}{\textbf{Table 2, 15-2 and 15-3 Marginal Effects}} \\
+\hline\hline 
+& \multicolumn{4}{c}{\underline{\textbf{\$1 Change in Price of*}}} & \underline{\textbf{\$1,000 Change}} \\
+& \textbf{Beach} & \textbf{Pier} & \textbf{Private} &\textbf{Charter} & \textbf{in Income*} \\
+\hline
+Change in Pr[$Beach$] & -0.0013 & 0.0001 & 0.0006 & 0.0006 & 0.0062 \\ 
+Change in Pr[$Pier$] &  0.0001 & -0.0015 & 0.007 & 0.0007 &  -0.0173 \\
+Change in Pr[$Private$] &  0.0006 & 0.0007 & -0.0055 & 0.0042 & 0.0272 \\ 
+Change in Pr[$Charter$] & 0.0006 & 0.0007 & 0.0042 & -0.0055 & -0.0162 \\
+\hline\hline
+\end{tabular} 
+\end{center} 
+*These results are from the multinomial logit model, the marginal effects for price changes are for the conditional (mixed) logit model. 
+
+
+\section*{\underline{15 - 4}} 
+Use a 50\% subsample of the fishing mode choice data of Section 15.2.  Suppose we collapse the model to three alternatives and order the alternatives, with $y = 0$ if fishing from a pier or beach, $y = 1$ if fishing from a private boat and $y = 2$ if fishing from a charter boat.
+
+\subsection*{(a)}
+Estimate an ordered logit model with income as the only regressor. 
+
+\textit{See attached .do and .log files.}
+
+\subsection*{(b)}
+Provide an interpretation of the estimated coefficient.
+
+\textit{The coefficient estimate is positive, indicating that an increase in income is positively correlated with moving up the "scale" of fishing modes.  It is not clear to me that the order here is meaningful for the private vs. charter modes.  In fact the results from the multinomial logit model indicate that as income increases, the probability of private boat increases (this result is statistically significant).  Whereas for charter, the probability decreased as income increased although the result wasn't statistically significant.  This would point to the possibility that the suggested ordering here is not correct, and perhaps a model flipping the order of private and charter might be a better fit.}
+
+\subsection*{(c)}
+Compare the fit of this model with that from a three-choice multinomial model with income as the regressor.
+
+\textit{See attached .do and .log files for this estimation.  The three-choice multinomial model performs better than the ordered logit.  The Pseudo-$R^2$ for the ordered logic was 0.0000, whereas it is 0.0133 for the multinomial logit model.  The explanation in part (a), provides some possible intuition behind why this is the case.}
+\begin{center}
+\includepdf[pages={1-},scale=1]{Ackerman_ECON873_HW2.pdf}
+\end{center}
+
+\begin{center}
+\includepdf[pages={1-},scale=1]{Ackerman_ECON873_HW2_log.pdf}
+\end{center}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+

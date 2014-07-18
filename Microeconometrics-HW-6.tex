@@ -1,0 +1,160 @@
+\documentclass[11pt]{article}
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb}
+
+\usepackage{amsmath,amsthm,enumerate,graphicx,bm,type1cm,amssymb,epsfig,lscape,setspace,amssymb,url,color,tabu,xcolor,colortbl,rotating,tikz,pdfpages}
+
+
+\bibliographystyle{econometrica}
+
+%\usepackage{amsmath, amsthm, enumerate, graphicx, bm, type1cm, amssymb, natbib, remreset}
+%\usepackage{natbib}
+%\usepackage{setspace}
+\theoremstyle{definition}
+\newtheorem{mc}{MC}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{pr}{Proof}
+
+\newtheorem{assump}{Assumption}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{definition}{Definition}[section]
+% \def\stackunder#1#2{\mathrel{\mathop{#2}\limits_{#1}}}
+% \renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newtheorem{corol}{Corollary}[section]
+\newcommand{\argmax}{\mathop{\rm \textit{arg} \ \textit{max}}\limits}
+\newcommand{\argmin}{\mathop{\rm \textit{arg} \ \textit{min}}\limits}
+
+\newcommand{\vecop}{{\rm vec}}
+\newcommand{\E}{{\rm E}}
+\newcommand{\Var}{{\rm Var}}
+\newcommand{\determinant}{{\rm det}}
+\newcommand{\tr}{{\rm tr}}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\def\inprob{\stackrel{p}{\rightarrow}}
+\def\ninprob{\stackrel{p}{\nrightarrow}}
+\def\indist{\stackrel{d}{\rightarrow}}
+\def\nindist{\stackrel{d}{\nrightarrow}}
+\def\as{\stackrel{a.s.}{\rightarrow}}
+\def\betahn{\hat{\beta}_{n}}
+\def\betao{\beta^{0}}
+\def\sumin{\sum_{i=1}^{n}}
+\def\sumjn{\sum_{i=1}^{n}}
+\def\thetahn{\hat{\theta}_{n}}
+\def\Ho{$H_{0} \ : \ a(\beta^{0})=0$}
+\def\abhat{$a(\hat{\beta})$}
+\def\abo{$a(\beta^{0})$}
+\def\Abbar{$A(\bar{\beta})$}
+\def\bhat{$\hat{\beta}$}
+\def\bo{$\beta^{0}$}
+
+\setlength{\oddsidemargin}{5mm}
+\setlength{\textwidth}{16cm}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\textheight}{23cm}
+\onehalfspacing
+
+\definecolor{Gray}{gray}{0.85}
+
+\title{Cameron and Trivedi 18-3, 18-4,}
+\author{Robert Ackerman \\ University of North Carolina}
+% activate to footnote\thanks{Excuse all mistakes.  First attempt at LaTex. E-mail: \texttt{%
+%rkackerm@live.unc.edu}} }
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\pagenumbering{gobble}
+
+\section*{\underline{18-3}}
+Consider the exponential-gamma mixture.  This model is a special case of a MPH model.  The survivor function, conditional on a multiplicative heterogeneity factor $\nu$, for the exponential model is $S(t|\nu) = exp(-\mu t \nu), \lambda > 0$. The unconditional survivor function is given by the average survivor function.  Averaging is across the heterogeneous population using $g(\nu)$, the density of $\nu$, as the weighting function so $S(t) = \int_0^\infty S(t|\nu)g(\nu)\partial{} \nu $.  Assume that $\nu$ is (two-parameter) gamma distributed with $g(\nu) = \delta^k \nu^{k-1} exp(-\delta \nu)/\Gamma(k)$.   
+
+\subsection*{(a)} 
+Show that, given gamma heterogeneity, $S(t) = (1 + \mu t / \delta)^{-k}.$
+
+\begin{equation*}
+\begin{split}
+S(t) & = \mathbb{E}_{\nu} \left[ S(t|\nu)\right] \\
+ & = \int_0^\infty S(t|\nu)g(\nu)\partial \nu \\
+ & = \int_0^\infty exp(-\mu t \nu) \frac{\delta^k \nu^{k-1} exp(-\delta \nu)}{\Gamma(k)} \partial \nu \ \text{(take out non-$\nu$ parts)}\\
+ & = \frac{\delta^k}{\Gamma({k})} \int_0^\infty exp(-\mu t \nu) \nu^{k-1} exp(-\delta \nu)\partial \nu \\
+ & = \frac{\delta^k}{\Gamma({k})} \int_0^\infty \nu^{k-1}exp(-\nu (\mu t + \delta))\partial \nu \ (\text{let} \ U = \nu (\mu t + \delta) \ \text{\& integrate})\\
+ & =  \frac{\delta^k}{\Gamma({k})} \int_0^\infty \ U^{k-1} exp(-U) \partial U \\
+ & = \frac{\delta^k}{\Gamma({k})} \times \frac{\Gamma(k)}{\mu t +\delta)^k} \\
+ & = \frac{\delta^k}{\mu t +\delta)^k} = (1 + \mu t/\delta)^{-k} \ \square
+\end{split}
+\end{equation*}
+
+\subsection*{(b)} 
+Derive expressions for the unconditional duration density function $f(t)$ and the unconditional hazard function $\lambda (t)$.  These general expressions can be specialized by setting the mean of $nu$ at 1; that is set $k=\delta$, which leads to the exponential-gamma mixture.  Compare the mean and variance properties of this mixture distribution with those of the original exponential distribution.  
+
+\textit{We need to differentiate the result from (a) w.r.t t, and then take advantage of the relationship between $f(t)$, $S(t)$, and $\lambda(t)$} 
+
+\begin{equation*}
+\begin{split}
+f(t) & = \mu k / \delta left[1 + \mu t / \delta right]^(-k-1) \ \text{and,} \\
+\lambda(t) & = f(t) / S(t) \implies \\
+\lambda(t) & = \mu k / (\delta + \mu t) \\
+\end{split}
+\end{equation*}
+
+\subsection*{(c)} 
+Suppose that the random variable $\nu$ has a two-point distribution such that with probability $\pi$ it takes the value $\nu_1$ and with probability $910\pi)$ it takes value $\nu_2$.  What are the implications of this assumption for the specification of the unconditional survivor function?  Explain your answer.  
+
+\textit{When we make this assumption, we lose the analytical solution from above that we derived from making a specific assumption about the distribution.  Now we will have to estimate the integration numerically instead.} 
+
+\section*{\underline{18-4}} 
+Using the sample of the McCall data set from the empirical exercise in the previous chapter, reestimate the Weibull model for this truanting to full time employment (CENSOR1 = 1) under the assumption that unobserved heterogeneity (also called frailty in some computer packages, which may also have subcommand for specifying it) has gamma distribution.  
+
+\subsection*{(a)} 
+Using generalized residuals as in Section 18.7.2 test the hypothesis of model misspecification.  
+
+\begin{center}
+\includegraphics[scale=1]{ECON870HW6GraphA.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[scale=1]{ECON870HW6GraphB.pdf}
+\end{center}
+
+\textit{The two graphs above show the model residuals with no heterogeneity, and with the gamma heterogeneity assumption.  Both graphs have a 45-degree line superimposed to allow for a graphical analysis of the model specification in regards to assumptions.  If there were no heterogeneity we'd expect the residuals to closely follow this 45 degree line, because there would be no relationship between $X's$ and the size of the residual.  Clearly it looks like for the homoskedasticy assumption, that there is a relationship between the residuals and regressors.  However, the gamma heterogeneity assumption actually makes things far worse as can be seen in the second graph.}   
+
+\subsection*{(b)}
+Does the new model display a duration dependence property?  Does it provide a better fit to the data? Explain the results by reference to the interaction between unobserved heterogeneity and duration dependence.  
+
+\textit{It does display duration dependence, although not in the direction we would expect.  With the gamma assumption it appears that the longer the duration there is an increase in the hazard rate which is the opposeite effect we would expect.} 
+
+\subsection*{(c)}
+Repeat the exercise of part (a) under the assumption of log-normal heterogeneity.  Are the results about duration dependence significantly different from those for the gamma heterogeneity?
+
+\textit{Stata does not allow for log-normal specification of frailty, so instead the inverse-gaussian specification is chosen as a close substitute.  As we can see from the following graph, this specification corrects for the heterogeneity by moving the latter part of the cumulative hazard closer to the 45-degree line.  This is a far better specification than the gamma assumption was.} 
+
+\begin{center}
+\includegraphics[scale=1]{ECON870HW6GraphC.pdf}
+\end{center}
+
+\begin{center}
+\includepdf[pages={1-},scale=1]{HW6_Ackerman.pdf}
+\end{center}
+
+\begin{center}
+\includepdf[pages={1-},scale=1]{HW6_Ackermanlog.pdf}
+\end{center}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+

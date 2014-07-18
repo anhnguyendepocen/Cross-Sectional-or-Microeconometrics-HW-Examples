@@ -1,0 +1,209 @@
+--------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW1_Ackerman.log
+  log type:  text
+ opened on:  18 Jul 2014, 17:15:47
+
+. 
+. use "/Users/robertackerman/Desktop/Dropbox/Microeconometrics/randdata.dta"
+
+. set more off
+
+. pause on 
+
+. 
+. ** Re-name variables (from CT do file) **
+. rename meddol MED
+
+. rename binexp DMED
+
+. rename lnmeddol LNMED
+
+. rename linc LINC
+
+. rename lfam LFAM
+
+. rename educdec EDUCDEC
+
+. rename xage AGE
+
+. rename female FEMALE
+
+. rename child CHILD 
+
+. rename fchild FEMCHILD
+
+. rename black BLACK
+
+. rename disea NDISEASE
+
+. rename physlm PHYSLIM
+
+. rename hlthg HLTHG
+
+. rename hlthf HLTHF
+
+. rename hlthp HLTHP
+
+. rename idp IDP
+
+. rename logc LC
+
+. rename lpi LPI
+
+. rename fmde FMDE
+
+. 
+. ** Part 14-5 (a) OLS **
+. reg DMED NDISEASE
+
+      Source |       SS       df       MS              Number of obs =   20190
+-------------+------------------------------           F(  1, 20188) =  447.79
+       Model |  75.3162315     1  75.3162315           Prob > F      =  0.0000
+    Residual |  3395.55356 20188  .168196629           R-squared     =  0.0217
+-------------+------------------------------           Adj R-squared =  0.0217
+       Total |  3470.86979 20189  .171918856           Root MSE      =  .41012
+
+------------------------------------------------------------------------------
+        DMED |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0090601   .0004282    21.16   0.000     .0082209    .0098993
+       _cons |   .6775689   .0056133   120.71   0.000     .6665665    .6885714
+------------------------------------------------------------------------------
+
+. predict pols, xb
+
+. margins, dydx(NDISEASE)
+
+Average marginal effects                          Number of obs   =      20190
+Model VCE    : OLS
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : NDISEASE
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0090601   .0004282    21.16   0.000     .0082209    .0098993
+------------------------------------------------------------------------------
+
+. ** Parts 14-5 (b-c) Probit **
+. probit DMED NDISEASE
+
+Iteration 0:   log likelihood = -10652.429  
+Iteration 1:   log likelihood = -10411.009  
+Iteration 2:   log likelihood =  -10410.18  
+Iteration 3:   log likelihood =  -10410.18  
+
+Probit regression                                 Number of obs   =      20190
+                                                  LR chi2(1)      =     484.50
+                                                  Prob > chi2     =     0.0000
+Log likelihood =  -10410.18                       Pseudo R2       =     0.0227
+
+------------------------------------------------------------------------------
+        DMED |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0350956   .0016589    21.16   0.000     .0318443    .0383469
+       _cons |   .3972937   .0197527    20.11   0.000     .3585791    .4360083
+------------------------------------------------------------------------------
+
+. predict pprobit, pr
+
+. margins, dydx(NDISEASE)
+
+Average marginal effects                          Number of obs   =      20190
+Model VCE    : OIM
+
+Expression   : Pr(DMED), predict()
+dy/dx w.r.t. : NDISEASE
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0101656   .0004695    21.65   0.000     .0092454    .0110857
+------------------------------------------------------------------------------
+
+. margins, dydx(NDISEASE) atmean
+
+Conditional marginal effects                      Number of obs   =      20190
+Model VCE    : OIM
+
+Expression   : Pr(DMED), predict()
+dy/dx w.r.t. : NDISEASE
+at           : NDISEASE        =    11.24449 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0102324   .0004776    21.42   0.000     .0092963    .0111686
+------------------------------------------------------------------------------
+
+. 
+. ** Parts 14-5 (d-f) Logit **
+. logit DMED NDISEASE
+
+Iteration 0:   log likelihood = -10652.429  
+Iteration 1:   log likelihood = -10414.271  
+Iteration 2:   log likelihood = -10410.891  
+Iteration 3:   log likelihood =  -10410.89  
+
+Logistic regression                               Number of obs   =      20190
+                                                  LR chi2(1)      =     483.08
+                                                  Prob > chi2     =     0.0000
+Log likelihood =  -10410.89                       Pseudo R2       =     0.0227
+
+------------------------------------------------------------------------------
+        DMED |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0614653   .0029596    20.77   0.000     .0556647    .0672659
+       _cons |   .6169664   .0337662    18.27   0.000     .5507859     .683147
+------------------------------------------------------------------------------
+
+. predict plogit, pr
+
+. margins, dydx(NDISEASE)
+
+Average marginal effects                          Number of obs   =      20190
+Model VCE    : OIM
+
+Expression   : Pr(DMED), predict()
+dy/dx w.r.t. : NDISEASE
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0103248   .0004857    21.26   0.000      .009373    .0112767
+------------------------------------------------------------------------------
+
+. margins, dydx(NDISEASE) atmean 
+
+Conditional marginal effects                      Number of obs   =      20190
+Model VCE    : OIM
+
+Expression   : Pr(DMED), predict()
+dy/dx w.r.t. : NDISEASE
+at           : NDISEASE        =    11.24449 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    NDISEASE |   .0102965   .0004817    21.37   0.000     .0093523    .0112407
+------------------------------------------------------------------------------
+
+. 
+. ** Predicted Probabilities Plot **
+. sort NDISEASE
+
+. twoway (scatter DMED NDISEASE) (line pols NDISEASE) (line pprobit NDISEASE) (line plogit NDISEASE)
+
+. log close
+      name:  <unnamed>
+       log:  /Users/robertackerman/Desktop/Dropbox/Microeconometrics/HW1_Ackerman.log
+  log type:  text
+ closed on:  18 Jul 2014, 17:15:53
+--------------------------------------------------------------------------------------------------------------------------
